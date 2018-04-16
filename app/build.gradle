@@ -1,0 +1,88 @@
+apply plugin: 'com.android.application'
+
+def getProperty(String filename, String propName) {
+    def propsFile = rootProject.file(filename)
+    if (propsFile.exists()) {
+        def props = new Properties()
+        props.load(new FileInputStream(propsFile))
+        if (props[propName] != null) {
+            return props[propName]
+        } else {
+            print("No such property " + propName + " in file " + filename);
+        }
+    } else {
+        print(filename + " does not exist!")
+    }
+}
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion '27.0.3'
+
+    defaultConfig {
+        applicationId "com.marklei.mymovieguide"
+        minSdkVersion 21
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+
+        buildConfigField "String", "TMDB_API_KEY", "\"${getProperty("local.properties", "tmdb_api_key")}\""
+        buildConfigField "String", "TMDB_BASE_URL", "\"http://api.themoviedb.org/\""
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    //Support
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation "com.android.support:recyclerview-v7:26.1.0"
+    implementation "com.android.support:palette-v7:26.1.0"
+    implementation 'com.google.guava:guava:22.0'
+    implementation "android.arch.persistence.room:runtime:1.0.0"
+    annotationProcessor "android.arch.persistence.room:compiler:1.0.0"
+
+    // Rx
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.9'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+
+    // Network
+    implementation "com.squareup.okhttp3:okhttp:3.10.0"
+    implementation "com.squareup.okhttp3:logging-interceptor:3.10.0"
+    implementation 'com.github.bumptech.glide:glide:4.2.0'
+
+    // Retrofit 2
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-moshi:2.4.0'
+
+    // Other
+    implementation 'com.squareup.moshi:moshi:1.5.0'
+    implementation 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
+    // Dependency Injection
+    annotationProcessor "com.google.dagger:dagger-compiler:2.15"
+    implementation "com.google.dagger:dagger:2.15"
+    implementation "com.google.dagger:dagger-android:2.11"
+    implementation "com.google.dagger:dagger-android-support:2.11"
+    annotationProcessor "com.google.dagger:dagger-android-processor:2.11"
+    compileOnly 'javax.annotation:jsr250-api:1.0'
+
+    // Tests
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    implementation 'com.android.support.test.espresso:espresso-idling-resource:3.0.1'
+}
