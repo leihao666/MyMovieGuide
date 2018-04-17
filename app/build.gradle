@@ -42,15 +42,21 @@ android {
     }
 }
 
+ext {
+    supportLibVersion = '26.1.0'
+    okhttpVersion = '3.10.0'
+    daggerVersion = '2.11'
+}
+
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
 
     //Support
-    implementation 'com.android.support:appcompat-v7:26.1.0'
-    implementation "com.android.support:recyclerview-v7:26.1.0"
-    implementation "com.android.support:palette-v7:26.1.0"
+    implementation "com.android.support:appcompat-v7:${supportLibVersion}"
+    implementation "com.android.support:recyclerview-v7:${supportLibVersion}"
+    implementation "com.android.support:palette-v7:${supportLibVersion}"
     implementation 'com.google.guava:guava:22.0'
-    implementation "android.arch.persistence.room:runtime:1.0.0"
+    implementation 'android.arch.persistence.room:runtime:1.0.0'
     annotationProcessor "android.arch.persistence.room:compiler:1.0.0"
 
     // Rx
@@ -58,8 +64,8 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
 
     // Network
-    implementation "com.squareup.okhttp3:okhttp:3.10.0"
-    implementation "com.squareup.okhttp3:logging-interceptor:3.10.0"
+    implementation "com.squareup.okhttp3:okhttp:${okhttpVersion}"
+    implementation "com.squareup.okhttp3:logging-interceptor:${okhttpVersion}"
     implementation 'com.github.bumptech.glide:glide:4.2.0'
 
     // Retrofit 2
@@ -73,11 +79,11 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
     // Dependency Injection
-    annotationProcessor "com.google.dagger:dagger-compiler:2.15"
-    implementation "com.google.dagger:dagger:2.15"
-    implementation "com.google.dagger:dagger-android:2.11"
-    implementation "com.google.dagger:dagger-android-support:2.11"
-    annotationProcessor "com.google.dagger:dagger-android-processor:2.11"
+    annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
+    implementation "com.google.dagger:dagger:${daggerVersion}"
+    implementation "com.google.dagger:dagger-android:${daggerVersion}"
+    implementation "com.google.dagger:dagger-android-support:${daggerVersion}"
+    annotationProcessor "com.google.dagger:dagger-android-processor:${daggerVersion}"
     compileOnly 'javax.annotation:jsr250-api:1.0'
 
     // Tests
