@@ -1,12 +1,9 @@
 package com.marklei.mymovieguide.movies;
 
-import com.marklei.mymovieguide.data.Movie;
 import com.marklei.mymovieguide.data.source.MoviesDataSource;
 import com.marklei.mymovieguide.data.source.MoviesRepository;
 import com.marklei.mymovieguide.di.ActivityScoped;
 import com.marklei.mymovieguide.movies.sorting.SortType;
-
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -45,18 +42,7 @@ public class MoviesPresenter implements MoviesContract.Presenter {
             mMoviesRepository.refreshMovies();
         }
 
-        mMoviesRepository.getMovies(new MoviesDataSource.LoadMoviesCallback() {
-
-            @Override
-            public void onMoviesLoaded(List<Movie> movies) {
-
-            }
-
-            @Override
-            public void onDataNotAvailable() {
-
-            }
-        });
+        mMoviesRepository.getMovies();
     }
 
     private boolean isViewAttached() {
@@ -65,7 +51,7 @@ public class MoviesPresenter implements MoviesContract.Presenter {
 
     @Override
     public void setFiltering(SortType sortType) {
-
+        mMoviesRepository.setSortingOption(sortType);
     }
 
     @Override

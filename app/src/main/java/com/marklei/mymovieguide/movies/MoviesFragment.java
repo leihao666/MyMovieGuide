@@ -102,7 +102,10 @@ public class MoviesFragment extends DaggerFragment implements MoviesContract.Vie
 
     @Override
     public void showMovies(List<Movie> movies) {
-
+        this.movies.clear();
+        this.movies.addAll(movies);
+        moviesListing.setVisibility(View.VISIBLE);
+        adapter.notifyDataSetChanged();
     }
 
     @Override

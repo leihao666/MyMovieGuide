@@ -3,12 +3,15 @@ package com.marklei.mymovieguide.movies.sorting;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import javax.inject.Inject;
+
 public class SortingOptionStore {
 
     private SharedPreferences pref;
     private static final String SELECTED_OPTION = "selectedOption";
     private static final String PREF_NAME = "SortingOptionStore";
 
+    @Inject
     public SortingOptionStore(Context context) {
         pref = context.getApplicationContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
     }

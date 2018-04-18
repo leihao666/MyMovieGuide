@@ -17,12 +17,24 @@
 package com.marklei.mymovieguide.data.source;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
+import com.marklei.mymovieguide.data.Movie;
+import com.marklei.mymovieguide.movies.sorting.SortType;
+import com.marklei.mymovieguide.movies.sorting.SortingOptionStore;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import io.reactivex.Flowable;
 
+/**
+ * 从数据源加载电影到缓存的具体实现
+ */
 @Singleton
 public class MoviesRepository implements MoviesDataSource {
 
@@ -30,24 +42,74 @@ public class MoviesRepository implements MoviesDataSource {
 
     private final MoviesDataSource mMoviesLocalDataSource;
 
-    boolean mCacheIsDirty = false;
+    private SortingOptionStore sortingOptionStore;
+
+    @Nullable
+    Map<String, Movie> mCachedTasks;
+
+    boolean mCacheIsDirty = true;
 
     @Inject
     MoviesRepository(@Remote MoviesDataSource moviesRemoteDataSource,
-                     @Local MoviesDataSource moviesLocalDataSource) {
+                     @Local MoviesDataSource moviesLocalDataSource,
+                     SortingOptionStore store) {
         mMoviesRemoteDataSource = moviesRemoteDataSource;
         mMoviesLocalDataSource = moviesLocalDataSource;
+        sortingOptionStore = store;
     }
 
+    @Override
+    public Flowable<List<Movie>> getMovies() {
+        // Respond immediately with cache if available and not dirty
+        if (mCachedTasks != null && !mCacheIsDirty) {
+            return Flowable.fromIterable(mCachedTasks.values()).toList().toFlowable();
+        } else if (mCachedTasks == null) {
+            mCachedTasks = new LinkedHashMap<>();
+        }
+
+        Flowable<List<Movie>> remoteTasks = getAndSaveRemoteMovies();
+
+        if (mCacheIsDirty) {
+            return remoteTasks;
+        } else {
+            // Query the local storage if available. If not, query the network.
+            Flowable<List<Movie>> localTasks = getAndCacheLocalMovies();
+            return Flowable.concat(localTasks, remoteTasks)
+                    .filter(tasks -> !tasks.isEmpty())
+                    .firstOrError()
+                    .toFlowable();
+        }
+    }
+
+    private Flowable<List<Movie>> getAndCacheLocalMovies() {
+        return mMoviesLocalDataSource.getMovies()
+                .flatMap(movies -> Flowable.fromIterable(movies)
+                        .doOnNext(movie -> mCachedTasks.put(movie.getId(), movie))
+                        .toList()
+                        .toFlowable());
+    }
+
+    private Flowable<List<Movie>> getAndSaveRemoteMovies() {
+        return mMoviesRemoteDataSource
+                .getMovies()
+                .flatMap(movies -> Flowable.fromIterable(movies).doOnNext(movie -> {
+                    mMoviesLocalDataSource.saveMovie(movie);
+                    mCachedTasks.put(movie.getId(), movie);
+                }).toList().toFlowable())
+                .doOnComplete(() -> mCacheIsDirty = false);
+    }
 
     @Override
-    public void getMovies(@NonNull final LoadMoviesCallback callback) {
-        checkNotNull(callback);
+    public void saveMovie(@NonNull Movie task) {
 
     }
 
     @Override
     public void refreshMovies() {
 
+    }
+
+    public void setSortingOption(SortType sortType) {
+        sortingOptionStore.setSelectedOption(sortType);
     }
 }

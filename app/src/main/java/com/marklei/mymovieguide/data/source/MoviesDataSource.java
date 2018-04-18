@@ -22,16 +22,16 @@ import com.marklei.mymovieguide.data.Movie;
 
 import java.util.List;
 
+import io.reactivex.Flowable;
+
+/**
+ * 存取 Movie数据的主入口
+ */
 public interface MoviesDataSource {
 
-    interface LoadMoviesCallback {
+    Flowable<List<Movie>> getMovies();
 
-        void onMoviesLoaded(List<Movie> movies);
-
-        void onDataNotAvailable();
-    }
-
-    void getMovies(@NonNull LoadMoviesCallback callback);
+    void saveMovie(@NonNull Movie movie);
 
     void refreshMovies();
 }
