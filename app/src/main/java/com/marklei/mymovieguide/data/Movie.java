@@ -3,19 +3,25 @@ package com.marklei.mymovieguide.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.squareup.moshi.Json;
+
 public class Movie implements Parcelable {
 
     private String id;
     /* 概述 */
     private String overview;
     /* 发布日期 */
+    @Json(name = "release_date")
     private String releaseDate;
     /* 海报路径 */
+    @Json(name = "poster_path")
     private String posterPath;
     /* 背景图片路径 */
+    @Json(name = "backdrop_path")
     private String backdropPath;
     private String title;
     /* 平均评分 */
+    @Json(name = "vote_average")
     private double voteAverage;
 
     private Movie(Parcel in) {

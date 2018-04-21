@@ -45,9 +45,15 @@ public class MoviesRepository implements MoviesDataSource {
     private SortingOptionStore sortingOptionStore;
 
     @Nullable
-    Map<String, Movie> mCachedTasks;
+    Map<String, Movie> mCachedPopularMovies;
+    @Nullable
+    Map<String, Movie> mCachedHighestRatedMovies;
+    @Nullable
+    Map<String, Movie> mCachedFavoritesMovies;
 
-    boolean mCacheIsDirty = true;
+    boolean mCachePopularIsDirty = false;
+    boolean mCacheHighestRatedIsDirty = false;
+    boolean mCacheFavoritesIsDirty = false;
 
     @Inject
     MoviesRepository(@Remote MoviesDataSource moviesRemoteDataSource,
@@ -59,44 +65,88 @@ public class MoviesRepository implements MoviesDataSource {
     }
 
     @Override
-    public Flowable<List<Movie>> getMovies() {
-        // Respond immediately with cache if available and not dirty
-        if (mCachedTasks != null && !mCacheIsDirty) {
-            return Flowable.fromIterable(mCachedTasks.values()).toList().toFlowable();
-        } else if (mCachedTasks == null) {
-            mCachedTasks = new LinkedHashMap<>();
+    public Flowable<List<Movie>> fetchPopularMovies() {
+        if (mCachedPopularMovies != null && !mCachePopularIsDirty) {
+            return Flowable.fromIterable(mCachedPopularMovies.values()).toList().toFlowable();
+        } else if (mCachedPopularMovies == null) {
+            mCachedPopularMovies = new LinkedHashMap<>();
         }
 
-        Flowable<List<Movie>> remoteTasks = getAndSaveRemoteMovies();
+        Flowable<List<Movie>> remoteMovies = getAndSaveRemotePopularMovies();
 
-        if (mCacheIsDirty) {
-            return remoteTasks;
+        if (mCachePopularIsDirty) {
+            return remoteMovies;
         } else {
             // Query the local storage if available. If not, query the network.
-            Flowable<List<Movie>> localTasks = getAndCacheLocalMovies();
-            return Flowable.concat(localTasks, remoteTasks)
+            Flowable<List<Movie>> localTasks = getAndCacheLocalPopularMovies();
+            return Flowable.concat(localTasks, remoteMovies)
                     .filter(tasks -> !tasks.isEmpty())
                     .firstOrError()
                     .toFlowable();
         }
     }
 
-    private Flowable<List<Movie>> getAndCacheLocalMovies() {
-        return mMoviesLocalDataSource.getMovies()
+    private Flowable<List<Movie>> getAndSaveRemotePopularMovies() {
+        return mMoviesRemoteDataSource
+                .fetchPopularMovies()
+                .flatMap(movies -> Flowable.fromIterable(movies).doOnNext(movie -> {
+                    mMoviesLocalDataSource.saveMovie(movie);
+                    mCachedPopularMovies.put(movie.getId(), movie);
+                }).toList().toFlowable())
+                .doOnComplete(() -> mCachePopularIsDirty = false);
+    }
+
+    private Flowable<List<Movie>> getAndCacheLocalPopularMovies() {
+        return mMoviesLocalDataSource.fetchPopularMovies()
                 .flatMap(movies -> Flowable.fromIterable(movies)
-                        .doOnNext(movie -> mCachedTasks.put(movie.getId(), movie))
+                        .doOnNext(movie -> mCachedPopularMovies.put(movie.getId(), movie))
                         .toList()
                         .toFlowable());
     }
 
-    private Flowable<List<Movie>> getAndSaveRemoteMovies() {
+    @Override
+    public Flowable<List<Movie>> fetchHighestRatedMovies() {
+        if (mCachedHighestRatedMovies != null && !mCacheHighestRatedIsDirty) {
+            return Flowable.fromIterable(mCachedHighestRatedMovies.values()).toList().toFlowable();
+        } else if (mCachedHighestRatedMovies == null) {
+            mCachedHighestRatedMovies = new LinkedHashMap<>();
+        }
+
+        Flowable<List<Movie>> remoteMovies = getAndSaveRemoteHighestRatedMovies();
+
+        if (mCacheHighestRatedIsDirty) {
+            return remoteMovies;
+        } else {
+            // Query the local storage if available. If not, query the network.
+            Flowable<List<Movie>> localTasks = getAndCacheLocalHighestRatedMovies();
+            return Flowable.concat(localTasks, remoteMovies)
+                    .filter(tasks -> !tasks.isEmpty())
+                    .firstOrError()
+                    .toFlowable();
+        }
+    }
+
+    private Flowable<List<Movie>> getAndSaveRemoteHighestRatedMovies() {
         return mMoviesRemoteDataSource
-                .getMovies()
+                .fetchHighestRatedMovies()
                 .flatMap(movies -> Flowable.fromIterable(movies).doOnNext(movie -> {
                     mMoviesLocalDataSource.saveMovie(movie);
-                    mCachedTasks.put(movie.getId(), movie);
+                    mCachedHighestRatedMovies.put(movie.getId(), movie);
                 }).toList().toFlowable())
-                .doOnComplete(() -> mCacheIsDirty = false);
+                .doOnComplete(() -> mCacheHighestRatedIsDirty = false);
+    }
+
+    private Flowable<List<Movie>> getAndCacheLocalHighestRatedMovies() {
+        return mMoviesLocalDataSource.fetchHighestRatedMovies()
+                .flatMap(movies -> Flowable.fromIterable(movies)
+                        .doOnNext(movie -> mCachedHighestRatedMovies.put(movie.getId(), movie))
+                        .toList()
+                        .toFlowable());
+    }
+
+    @Override
+    public Flowable<List<Movie>> fetchFavoritesMovies() {
+        return null;
     }
 
     @Override
@@ -106,7 +156,13 @@ public class MoviesRepository implements MoviesDataSource {
 
     @Override
     public void refreshMovies() {
+        mCachePopularIsDirty = true;
+        mCacheHighestRatedIsDirty = true;
+        mCacheFavoritesIsDirty = true;
+    }
 
+    public int getSelectedOption() {
+        return sortingOptionStore.getSelectedOption();
     }
 
     public void setSortingOption(SortType sortType) {

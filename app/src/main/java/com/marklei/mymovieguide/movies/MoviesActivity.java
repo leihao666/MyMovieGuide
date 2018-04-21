@@ -16,8 +16,6 @@ import dagger.android.support.DaggerAppCompatActivity;
 public class MoviesActivity extends DaggerAppCompatActivity {
 
     @Inject
-    MoviesPresenter mMoviesPresenter;
-    @Inject
     Lazy<MoviesFragment> moviesFragmentProvider;
 
     @Override

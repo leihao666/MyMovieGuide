@@ -1,24 +1,46 @@
 package com.marklei.mymovieguide.movies;
 
+import android.support.annotation.NonNull;
+
+import com.marklei.mymovieguide.data.Movie;
 import com.marklei.mymovieguide.data.source.MoviesDataSource;
 import com.marklei.mymovieguide.data.source.MoviesRepository;
 import com.marklei.mymovieguide.di.ActivityScoped;
 import com.marklei.mymovieguide.movies.sorting.SortType;
+import com.marklei.mymovieguide.util.schedulers.BaseSchedulerProvider;
+
+import java.util.List;
 
 import javax.inject.Inject;
+
+import io.reactivex.Flowable;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 @ActivityScoped
 public class MoviesPresenter implements MoviesContract.Presenter {
 
+    @NonNull
     private final MoviesRepository mMoviesRepository;
 
     private MoviesContract.View view;
 
+    @NonNull
+    private final BaseSchedulerProvider mSchedulerProvider;
+
     private boolean mFirstLoad = true;
 
+    @NonNull
+    private CompositeDisposable mCompositeDisposable;
+
     @Inject
-    MoviesPresenter(MoviesRepository moviesRepository) {
-        mMoviesRepository = moviesRepository;
+    MoviesPresenter(@NonNull MoviesRepository moviesRepository, @NonNull BaseSchedulerProvider schedulerProvider) {
+        mMoviesRepository = checkNotNull(moviesRepository, "moviesRepository cannot be null");
+        mSchedulerProvider = checkNotNull(schedulerProvider, "schedulerProvider cannot be null");
+
+        mCompositeDisposable = new CompositeDisposable();
     }
 
     @Override
@@ -42,7 +64,25 @@ public class MoviesPresenter implements MoviesContract.Presenter {
             mMoviesRepository.refreshMovies();
         }
 
-        mMoviesRepository.getMovies();
+        mCompositeDisposable.clear();
+        Flowable<List<Movie>> listFlowable;
+        int selectedOption = mMoviesRepository.getSelectedOption();
+        if (selectedOption == SortType.MOST_POPULAR.getValue()) {
+            listFlowable = mMoviesRepository.fetchPopularMovies();
+        } else if (selectedOption == SortType.HIGHEST_RATED.getValue()) {
+            listFlowable = mMoviesRepository.fetchHighestRatedMovies();
+        } else {
+            listFlowable = mMoviesRepository.fetchFavoritesMovies();
+        }
+        Disposable disposable = listFlowable
+                .subscribeOn(mSchedulerProvider.io())
+                .observeOn(mSchedulerProvider.ui())
+                .subscribe(
+                        // onNext
+                        movies -> view.showMovies(movies),
+                        // onError
+                        throwable -> view.showLoadingMovieError(throwable.getMessage()));
+        mCompositeDisposable.add(disposable);
     }
 
     private boolean isViewAttached() {

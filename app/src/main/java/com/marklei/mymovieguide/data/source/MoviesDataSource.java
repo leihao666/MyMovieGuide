@@ -29,9 +29,13 @@ import io.reactivex.Flowable;
  */
 public interface MoviesDataSource {
 
-    Flowable<List<Movie>> getMovies();
+    Flowable<List<Movie>> fetchPopularMovies();
 
-    void saveMovie(@NonNull Movie movie);
+    Flowable<List<Movie>> fetchHighestRatedMovies();
+
+    Flowable<List<Movie>> fetchFavoritesMovies();
+
+    void saveMovie(@NonNull Movie task);
 
     void refreshMovies();
 }
