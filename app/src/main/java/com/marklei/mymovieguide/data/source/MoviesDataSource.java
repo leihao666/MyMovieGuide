@@ -35,7 +35,7 @@ public interface MoviesDataSource {
 
     Flowable<List<Movie>> fetchFavoritesMovies();
 
-    void saveMovie(@NonNull Movie task);
+    void saveMovie(@NonNull Movie movie);
 
     void refreshMovies();
 }

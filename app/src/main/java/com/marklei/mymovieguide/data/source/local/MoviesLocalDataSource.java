@@ -12,16 +12,21 @@ import javax.inject.Singleton;
 
 import io.reactivex.Flowable;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 @Singleton
 public class MoviesLocalDataSource implements MoviesDataSource {
 
+    private final MoviesDao mMoviesDao;
+
     @Inject
-    MoviesLocalDataSource() {
+    MoviesLocalDataSource(@NonNull MoviesDao moviesDao) {
+        mMoviesDao = moviesDao;
     }
 
     @Override
     public Flowable<List<Movie>> fetchPopularMovies() {
-        return null;
+        return Flowable.fromIterable(mMoviesDao.getPopularMovies()).toList().toFlowable();
     }
 
     @Override
@@ -35,8 +40,9 @@ public class MoviesLocalDataSource implements MoviesDataSource {
     }
 
     @Override
-    public void saveMovie(@NonNull Movie movie) {
-
+    public void saveMovie(@NonNull final Movie movie) {
+        checkNotNull(movie);
+        mMoviesDao.insertMovie(movie);
     }
 
     @Override

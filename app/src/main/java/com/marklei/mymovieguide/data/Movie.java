@@ -1,28 +1,50 @@
 package com.marklei.mymovieguide.data;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.squareup.moshi.Json;
 
-public class Movie implements Parcelable {
+@Entity(tableName = "movies")
+public final class Movie implements Parcelable {
 
+    @PrimaryKey
+    @NonNull
+    @ColumnInfo(name = "entryid")
     private String id;
     /* 概述 */
+    @Nullable
+    @ColumnInfo(name = "overview")
     private String overview;
     /* 发布日期 */
+    @Nullable
+    @ColumnInfo(name = "release_date")
     @Json(name = "release_date")
     private String releaseDate;
     /* 海报路径 */
+    @Nullable
+    @ColumnInfo(name = "poster_path")
     @Json(name = "poster_path")
     private String posterPath;
     /* 背景图片路径 */
+    @Nullable
+    @ColumnInfo(name = "backdrop_path")
     @Json(name = "backdrop_path")
     private String backdropPath;
+    @Nullable
+    @ColumnInfo(name = "title")
     private String title;
     /* 平均评分 */
+    @ColumnInfo(name = "vote_average")
     @Json(name = "vote_average")
     private double voteAverage;
+    @ColumnInfo(name = "popularity")
+    private double popularity;
 
     private Movie(Parcel in) {
         id = in.readString();
@@ -32,6 +54,20 @@ public class Movie implements Parcelable {
         backdropPath = in.readString();
         title = in.readString();
         voteAverage = in.readDouble();
+        popularity = in.readDouble();
+    }
+
+    public Movie(@NonNull String id, @Nullable String overview,
+                 @Nullable String releaseDate, @Nullable String posterPath,
+                 @Nullable String backdropPath, @Nullable String title, double voteAverage, double popularity) {
+        this.id = id;
+        this.overview = overview;
+        this.releaseDate = releaseDate;
+        this.posterPath = posterPath;
+        this.backdropPath = backdropPath;
+        this.title = title;
+        this.voteAverage = voteAverage;
+        this.popularity = popularity;
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
@@ -102,6 +138,14 @@ public class Movie implements Parcelable {
         this.voteAverage = voteAverage;
     }
 
+    public double getPopularity() {
+        return popularity;
+    }
+
+    public void setPopularity(double popularity) {
+        this.popularity = popularity;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -116,5 +160,6 @@ public class Movie implements Parcelable {
         dest.writeString(backdropPath);
         dest.writeString(title);
         dest.writeDouble(voteAverage);
+        dest.writeDouble(popularity);
     }
 }

@@ -32,6 +32,8 @@ import javax.inject.Singleton;
 
 import io.reactivex.Flowable;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * 从数据源加载电影到缓存的具体实现
  */
@@ -78,9 +80,9 @@ public class MoviesRepository implements MoviesDataSource {
             return remoteMovies;
         } else {
             // Query the local storage if available. If not, query the network.
-            Flowable<List<Movie>> localTasks = getAndCacheLocalPopularMovies();
-            return Flowable.concat(localTasks, remoteMovies)
-                    .filter(tasks -> !tasks.isEmpty())
+            Flowable<List<Movie>> localMovies = getAndCacheLocalPopularMovies();
+            return Flowable.concat(localMovies, remoteMovies)
+                    .filter(movies -> !movies.isEmpty())
                     .firstOrError()
                     .toFlowable();
         }
@@ -118,9 +120,9 @@ public class MoviesRepository implements MoviesDataSource {
             return remoteMovies;
         } else {
             // Query the local storage if available. If not, query the network.
-            Flowable<List<Movie>> localTasks = getAndCacheLocalHighestRatedMovies();
-            return Flowable.concat(localTasks, remoteMovies)
-                    .filter(tasks -> !tasks.isEmpty())
+            Flowable<List<Movie>> localMovies = getAndCacheLocalHighestRatedMovies();
+            return Flowable.concat(localMovies, remoteMovies)
+                    .filter(movies -> !movies.isEmpty())
                     .firstOrError()
                     .toFlowable();
         }
@@ -146,12 +148,34 @@ public class MoviesRepository implements MoviesDataSource {
 
     @Override
     public Flowable<List<Movie>> fetchFavoritesMovies() {
-        return null;
+        if (mCachedFavoritesMovies != null && !mCacheFavoritesIsDirty) {
+            return Flowable.fromIterable(mCachedFavoritesMovies.values()).toList().toFlowable();
+        } else if (mCachedFavoritesMovies == null) {
+            mCachedFavoritesMovies = new LinkedHashMap<>();
+        }
+
+        Flowable<List<Movie>> remoteMovies = getAndCacheLocalFavoritesMovies();
+
+        if (mCacheFavoritesIsDirty) {
+            return remoteMovies;
+        } else {
+            return Flowable.fromIterable(mCachedFavoritesMovies.values()).toList().toFlowable();
+        }
+    }
+
+    private Flowable<List<Movie>> getAndCacheLocalFavoritesMovies() {
+        return mMoviesLocalDataSource.fetchFavoritesMovies()
+                .flatMap(movies -> Flowable.fromIterable(movies)
+                        .doOnNext(movie -> mCachedFavoritesMovies.put(movie.getId(), movie))
+                        .toList()
+                        .toFlowable());
     }
 
     @Override
-    public void saveMovie(@NonNull Movie task) {
-
+    public void saveMovie(@NonNull Movie movie) {
+        checkNotNull(movie);
+        mMoviesRemoteDataSource.saveMovie(movie);
+        mMoviesLocalDataSource.saveMovie(movie);
     }
 
     @Override
