@@ -67,20 +67,20 @@ public class MoviesRepository implements MoviesDataSource {
     }
 
     @Override
-    public Flowable<List<Movie>> fetchPopularMovies() {
+    public Flowable<List<Movie>> fetchPopularMovies(int page) {
         if (mCachedPopularMovies != null && !mCachePopularIsDirty) {
             return Flowable.fromIterable(mCachedPopularMovies.values()).toList().toFlowable();
         } else if (mCachedPopularMovies == null) {
             mCachedPopularMovies = new LinkedHashMap<>();
         }
 
-        Flowable<List<Movie>> remoteMovies = getAndSaveRemotePopularMovies();
+        Flowable<List<Movie>> remoteMovies = getAndSaveRemotePopularMovies(page);
 
         if (mCachePopularIsDirty) {
             return remoteMovies;
         } else {
             // Query the local storage if available. If not, query the network.
-            Flowable<List<Movie>> localMovies = getAndCacheLocalPopularMovies();
+            Flowable<List<Movie>> localMovies = getAndCacheLocalPopularMovies(page);
             return Flowable.concat(localMovies, remoteMovies)
                     .filter(movies -> !movies.isEmpty())
                     .firstOrError()
@@ -88,9 +88,9 @@ public class MoviesRepository implements MoviesDataSource {
         }
     }
 
-    private Flowable<List<Movie>> getAndSaveRemotePopularMovies() {
+    private Flowable<List<Movie>> getAndSaveRemotePopularMovies(int page) {
         return mMoviesRemoteDataSource
-                .fetchPopularMovies()
+                .fetchPopularMovies(page)
                 .flatMap(movies -> Flowable.fromIterable(movies).doOnNext(movie -> {
                     mMoviesLocalDataSource.saveMovie(movie);
                     mCachedPopularMovies.put(movie.getId(), movie);
@@ -98,8 +98,8 @@ public class MoviesRepository implements MoviesDataSource {
                 .doOnComplete(() -> mCachePopularIsDirty = false);
     }
 
-    private Flowable<List<Movie>> getAndCacheLocalPopularMovies() {
-        return mMoviesLocalDataSource.fetchPopularMovies()
+    private Flowable<List<Movie>> getAndCacheLocalPopularMovies(int page) {
+        return mMoviesLocalDataSource.fetchPopularMovies(page)
                 .flatMap(movies -> Flowable.fromIterable(movies)
                         .doOnNext(movie -> mCachedPopularMovies.put(movie.getId(), movie))
                         .toList()

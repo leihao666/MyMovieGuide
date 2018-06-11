@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.reactivex.Flowable;
+import io.reactivex.functions.Function;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -25,8 +26,9 @@ public class MoviesLocalDataSource implements MoviesDataSource {
     }
 
     @Override
-    public Flowable<List<Movie>> fetchPopularMovies() {
-        return Flowable.fromIterable(mMoviesDao.getPopularMovies()).toList().toFlowable();
+    public Flowable<List<Movie>> fetchPopularMovies(int page) {
+        return Flowable.just(page).flatMap((Function<Integer, Flowable<List<Movie>>>) integer -> Flowable.just(mMoviesDao.getPopularMovies(integer)));
+//        return Flowable.just(mMoviesDao.getPopularMovies(page));
     }
 
     @Override

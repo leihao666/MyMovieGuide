@@ -31,6 +31,7 @@ public class MoviesPresenter implements MoviesContract.Presenter {
     private final BaseSchedulerProvider mSchedulerProvider;
 
     private boolean mFirstLoad = true;
+    private int currentPage = 1;
 
     @NonNull
     private CompositeDisposable mCompositeDisposable;
@@ -46,7 +47,7 @@ public class MoviesPresenter implements MoviesContract.Presenter {
     @Override
     public void loadMovies(boolean forceUpdate) {
         // Simplification for sample: a network reload will be forced on first load.
-        loadTasks(forceUpdate || mFirstLoad, true);
+        loadMovies(forceUpdate || mFirstLoad, true);
         mFirstLoad = false;
     }
 
@@ -54,7 +55,7 @@ public class MoviesPresenter implements MoviesContract.Presenter {
      * @param forceUpdate   Pass in true to refresh the data in the {@link MoviesDataSource}
      * @param showLoadingUI Pass in true to display a loading icon in the UI
      */
-    private void loadTasks(boolean forceUpdate, final boolean showLoadingUI) {
+    private void loadMovies(boolean forceUpdate, final boolean showLoadingUI) {
         if (showLoadingUI) {
             if (isViewAttached()) {
                 view.setLoadingIndicator(true);
@@ -68,7 +69,7 @@ public class MoviesPresenter implements MoviesContract.Presenter {
         Flowable<List<Movie>> listFlowable;
         int selectedOption = mMoviesRepository.getSelectedOption();
         if (selectedOption == SortType.MOST_POPULAR.getValue()) {
-            listFlowable = mMoviesRepository.fetchPopularMovies();
+            listFlowable = mMoviesRepository.fetchPopularMovies(currentPage);
         } else if (selectedOption == SortType.HIGHEST_RATED.getValue()) {
             listFlowable = mMoviesRepository.fetchHighestRatedMovies();
         } else {
@@ -97,7 +98,7 @@ public class MoviesPresenter implements MoviesContract.Presenter {
     @Override
     public void takeView(MoviesContract.View view) {
         this.view = view;
-        loadMovies(false);
+        loadMovies(false, true);
     }
 
     @Override

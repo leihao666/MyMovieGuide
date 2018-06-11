@@ -4,6 +4,7 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.Update;
 
 import com.marklei.mymovieguide.data.Movie;
 
@@ -16,12 +17,12 @@ import java.util.List;
 public interface MoviesDao {
 
     /**
-     * Select all tasks from the tasks table.
+     * Select all movies from the movies table.
      *
-     * @return all tasks.
+     * @return all movies.
      */
-    @Query("SELECT * FROM MOVIES")
-    List<Movie> getPopularMovies();
+    @Query("SELECT * FROM MOVIES ORDER BY popularity DESC LIMIT 20 OFFSET 20*(:page - 1)")
+    List<Movie> getPopularMovies(int page);
 
     /**
      * Insert a movie in the database. If the movie already exists, replace it.
@@ -30,4 +31,13 @@ public interface MoviesDao {
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertMovie(Movie movie);
+
+    /**
+     * Update a movie.
+     *
+     * @param movie movie to be updated
+     * @return the number of movies updated. This should always be 1.
+     */
+    @Update
+    int updateMovie(Movie movie);
 }

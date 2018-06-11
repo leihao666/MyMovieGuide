@@ -29,7 +29,7 @@ import io.reactivex.Flowable;
  */
 public interface MoviesDataSource {
 
-    Flowable<List<Movie>> fetchPopularMovies();
+    Flowable<List<Movie>> fetchPopularMovies(int page);
 
     Flowable<List<Movie>> fetchHighestRatedMovies();
 
