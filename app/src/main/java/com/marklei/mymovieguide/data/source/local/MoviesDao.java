@@ -25,6 +25,14 @@ public interface MoviesDao {
     List<Movie> getPopularMovies(int page);
 
     /**
+     * Select all movies from the movies table.
+     *
+     * @return all movies.
+     */
+    @Query("SELECT * FROM MOVIES ORDER BY vote_average DESC")
+    List<Movie> getHighestRatedMovies();
+
+    /**
      * Insert a movie in the database. If the movie already exists, replace it.
      *
      * @param movie the task to be inserted.

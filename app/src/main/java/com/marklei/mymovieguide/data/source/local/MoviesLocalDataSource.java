@@ -10,6 +10,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.functions.Function;
 
@@ -33,7 +34,8 @@ public class MoviesLocalDataSource implements MoviesDataSource {
 
     @Override
     public Flowable<List<Movie>> fetchHighestRatedMovies() {
-        return null;
+        return Flowable.create(emitter -> emitter.onNext(mMoviesDao.getHighestRatedMovies()), BackpressureStrategy.BUFFER);
+//        return Flowable.just().flatMap((Function<Integer, Flowable<List<Movie>>>) integer -> Flowable.just(mMoviesDao.getHighestRatedMovies()));
     }
 
     @Override
