@@ -26,7 +26,9 @@ public interface MoviesContract {
 
     interface Presenter extends BasePresenter<View> {
 
-        void loadMovies(boolean forceUpdate);
+        void firstPage(boolean forceUpdate);
+
+        void nextPage(boolean forceUpdate);
 
         void setFiltering(SortType sortType);
     }

@@ -26,12 +26,12 @@ public class MoviesRemoteDataSource implements MoviesDataSource {
 
     @Override
     public Flowable<List<Movie>> fetchPopularMovies(int page) {
-        return tmdbWebService.popularMovies().map(MoviesWraper::getMovieList);
+        return tmdbWebService.popularMovies(page).map(MoviesWraper::getMovieList);
     }
 
     @Override
-    public Flowable<List<Movie>> fetchHighestRatedMovies() {
-        return tmdbWebService.highestRatedMovies().map(MoviesWraper::getMovieList);
+    public Flowable<List<Movie>> fetchHighestRatedMovies(int page) {
+        return tmdbWebService.highestRatedMovies(page).map(MoviesWraper::getMovieList);
     }
 
     @Override

@@ -4,6 +4,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -36,6 +37,7 @@ public class MoviesFragment extends DaggerFragment implements MoviesContract.Vie
     @BindView(R.id.movies_listing)
     RecyclerView moviesListing;
 
+    private boolean forceUpdate = false;
     private RecyclerView.Adapter adapter;
     private List<Movie> movies = new ArrayList<>(20);
     private Unbinder unbinder;
@@ -60,6 +62,16 @@ public class MoviesFragment extends DaggerFragment implements MoviesContract.Vie
         View rootView = inflater.inflate(R.layout.fragment_movies, container, false);
         unbinder = ButterKnife.bind(this, rootView);
         initLayoutReferences();
+        moviesListing.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+
+                if (!recyclerView.canScrollVertically(1)) {
+                    mPresenter.nextPage(forceUpdate);
+                }
+            }
+        });
         return rootView;
     }
 
@@ -97,7 +109,7 @@ public class MoviesFragment extends DaggerFragment implements MoviesContract.Vie
 
     @Override
     public void setLoadingIndicator(boolean active) {
-
+        Snackbar.make(moviesListing, R.string.loading_movies, Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
@@ -115,7 +127,7 @@ public class MoviesFragment extends DaggerFragment implements MoviesContract.Vie
 
     @Override
     public void showLoadingMovieError(String errorMessage) {
-
+        Snackbar.make(moviesListing, errorMessage, Snackbar.LENGTH_INDEFINITE).show();
     }
 
     @Override
@@ -140,7 +152,8 @@ public class MoviesFragment extends DaggerFragment implements MoviesContract.Vie
                     mPresenter.setFiltering(SortType.FAVORITES);
                     break;
             }
-            mPresenter.loadMovies(false);
+            forceUpdate = true;
+            mPresenter.firstPage(true);
             return true;
         });
         popup.show();

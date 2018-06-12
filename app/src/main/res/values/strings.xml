@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">MyMovieGuide</string>
     <string name="action_filter">Filter</string>
+    <string name="loading_movies">正在加载…</string>
     <string name="movie_guide">电影手册</string>
     <string name="most_popular">最热门</string>
     <string name="highest_rated">最高评分</string>

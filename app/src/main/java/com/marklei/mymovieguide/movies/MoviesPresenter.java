@@ -9,6 +9,7 @@ import com.marklei.mymovieguide.di.ActivityScoped;
 import com.marklei.mymovieguide.movies.sorting.SortType;
 import com.marklei.mymovieguide.util.schedulers.BaseSchedulerProvider;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -30,8 +31,8 @@ public class MoviesPresenter implements MoviesContract.Presenter {
     @NonNull
     private final BaseSchedulerProvider mSchedulerProvider;
 
-    private boolean mFirstLoad = true;
     private int currentPage = 1;
+    private List<Movie> loadedMovies = new ArrayList<>();
 
     @NonNull
     private CompositeDisposable mCompositeDisposable;
@@ -45,10 +46,22 @@ public class MoviesPresenter implements MoviesContract.Presenter {
     }
 
     @Override
-    public void loadMovies(boolean forceUpdate) {
-        // Simplification for sample: a network reload will be forced on first load.
-        loadMovies(forceUpdate || mFirstLoad, true);
-        mFirstLoad = false;
+    public void firstPage(boolean forceUpdate) {
+        currentPage = 1;
+        loadedMovies.clear();
+        loadMovies(forceUpdate, true);
+    }
+
+    @Override
+    public void nextPage(boolean forceUpdate) {
+        if (forceUpdate && isPaginationSupported()) {
+            currentPage++;
+            loadMovies(true, true);
+        }
+    }
+
+    private boolean isPaginationSupported() {
+        return mMoviesRepository.getSelectedOption() != SortType.FAVORITES.getValue();
     }
 
     /**
@@ -57,7 +70,7 @@ public class MoviesPresenter implements MoviesContract.Presenter {
      */
     private void loadMovies(boolean forceUpdate, final boolean showLoadingUI) {
         if (showLoadingUI) {
-            if (isViewAttached()) {
+            if (view != null && view.isActive()) {
                 view.setLoadingIndicator(true);
             }
         }
@@ -71,7 +84,7 @@ public class MoviesPresenter implements MoviesContract.Presenter {
         if (selectedOption == SortType.MOST_POPULAR.getValue()) {
             listFlowable = mMoviesRepository.fetchPopularMovies(currentPage);
         } else if (selectedOption == SortType.HIGHEST_RATED.getValue()) {
-            listFlowable = mMoviesRepository.fetchHighestRatedMovies();
+            listFlowable = mMoviesRepository.fetchHighestRatedMovies(currentPage);
         } else {
             listFlowable = mMoviesRepository.fetchFavoritesMovies();
         }
@@ -80,14 +93,25 @@ public class MoviesPresenter implements MoviesContract.Presenter {
                 .observeOn(mSchedulerProvider.ui())
                 .subscribe(
                         // onNext
-                        movies -> view.showMovies(movies),
+                        this::onMovieFetchSuccess,
                         // onError
-                        throwable -> view.showLoadingMovieError(throwable.getMessage()));
+                        this::onMovieFetchFailed);
         mCompositeDisposable.add(disposable);
     }
 
-    private boolean isViewAttached() {
-        return view != null;
+    private void onMovieFetchSuccess(List<Movie> movies) {
+        if (isPaginationSupported()) {
+            loadedMovies.addAll(movies);
+        } else {
+            loadedMovies = new ArrayList<>(movies);
+        }
+        if (view != null && view.isActive()) {
+            view.showMovies(loadedMovies);
+        }
+    }
+
+    private void onMovieFetchFailed(Throwable e) {
+        view.showLoadingMovieError(e.getMessage());
     }
 
     @Override
@@ -98,7 +122,7 @@ public class MoviesPresenter implements MoviesContract.Presenter {
     @Override
     public void takeView(MoviesContract.View view) {
         this.view = view;
-        loadMovies(false, true);
+        firstPage(false);
     }
 
     @Override

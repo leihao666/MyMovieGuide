@@ -45,6 +45,8 @@ public final class Movie implements Parcelable {
     private double voteAverage;
     @ColumnInfo(name = "popularity")
     private double popularity;
+    @ColumnInfo(name = "is_favorite")
+    private final int isFavorite;
 
     private Movie(Parcel in) {
         id = in.readString();
@@ -55,11 +57,12 @@ public final class Movie implements Parcelable {
         title = in.readString();
         voteAverage = in.readDouble();
         popularity = in.readDouble();
+        isFavorite = in.readInt();
     }
 
     public Movie(@NonNull String id, @Nullable String overview,
                  @Nullable String releaseDate, @Nullable String posterPath,
-                 @Nullable String backdropPath, @Nullable String title, double voteAverage, double popularity) {
+                 @Nullable String backdropPath, @Nullable String title, double voteAverage, double popularity, int isFavorite) {
         this.id = id;
         this.overview = overview;
         this.releaseDate = releaseDate;
@@ -68,6 +71,7 @@ public final class Movie implements Parcelable {
         this.title = title;
         this.voteAverage = voteAverage;
         this.popularity = popularity;
+        this.isFavorite = isFavorite;
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
@@ -146,6 +150,10 @@ public final class Movie implements Parcelable {
         this.popularity = popularity;
     }
 
+    public int getIsFavorite() {
+        return isFavorite;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -161,5 +169,6 @@ public final class Movie implements Parcelable {
         dest.writeString(title);
         dest.writeDouble(voteAverage);
         dest.writeDouble(popularity);
+        dest.writeInt(isFavorite);
     }
 }

@@ -31,7 +31,7 @@ public interface MoviesDataSource {
 
     Flowable<List<Movie>> fetchPopularMovies(int page);
 
-    Flowable<List<Movie>> fetchHighestRatedMovies();
+    Flowable<List<Movie>> fetchHighestRatedMovies(int page);
 
     Flowable<List<Movie>> fetchFavoritesMovies();
 

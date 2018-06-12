@@ -8,6 +8,7 @@ import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * Created by ivan on 8/20/2017.
@@ -16,10 +17,10 @@ import retrofit2.http.Path;
 public interface TmdbWebService {
 
     @GET("3/discover/movie?language=zh&sort_by=popularity.desc")
-    Flowable<MoviesWraper> popularMovies();
+    Flowable<MoviesWraper> popularMovies(@Query("page") int page);
 
     @GET("3/discover/movie?vote_count.gte=500&language=zh&sort_by=vote_average.desc")
-    Flowable<MoviesWraper> highestRatedMovies();
+    Flowable<MoviesWraper> highestRatedMovies(@Query("page") int page);
 
     @GET("3/movie/{movieId}/videos")
     Observable<VideoWrapper> trailers(@Path("movieId") String movieId);

@@ -18,11 +18,13 @@ public interface MoviesDao {
 
     /**
      * Select all movies from the movies table.
+     * 本地数据没有分页
      *
      * @return all movies.
      */
-    @Query("SELECT * FROM MOVIES ORDER BY popularity DESC LIMIT 20 OFFSET 20*(:page - 1)")
-    List<Movie> getPopularMovies(int page);
+//    @Query("SELECT * FROM MOVIES ORDER BY popularity DESC LIMIT 20 OFFSET 20*(:page - 1)")
+    @Query("SELECT * FROM MOVIES ORDER BY popularity DESC")
+    List<Movie> getPopularMovies();
 
     /**
      * Select all movies from the movies table.
@@ -31,6 +33,14 @@ public interface MoviesDao {
      */
     @Query("SELECT * FROM MOVIES ORDER BY vote_average DESC")
     List<Movie> getHighestRatedMovies();
+
+    /**
+     * Select all movies from the movies table.
+     *
+     * @return all movies.
+     */
+    @Query("SELECT * FROM MOVIES WHERE is_favorite = 1")
+    List<Movie> getFavoritesMovies();
 
     /**
      * Insert a movie in the database. If the movie already exists, replace it.

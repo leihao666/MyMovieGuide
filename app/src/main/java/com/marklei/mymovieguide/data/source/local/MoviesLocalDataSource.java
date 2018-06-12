@@ -12,7 +12,6 @@ import javax.inject.Singleton;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
-import io.reactivex.functions.Function;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -28,19 +27,17 @@ public class MoviesLocalDataSource implements MoviesDataSource {
 
     @Override
     public Flowable<List<Movie>> fetchPopularMovies(int page) {
-        return Flowable.just(page).flatMap((Function<Integer, Flowable<List<Movie>>>) integer -> Flowable.just(mMoviesDao.getPopularMovies(integer)));
-//        return Flowable.just(mMoviesDao.getPopularMovies(page));
+        return Flowable.create(emitter -> emitter.onNext(mMoviesDao.getPopularMovies()), BackpressureStrategy.BUFFER);
     }
 
     @Override
-    public Flowable<List<Movie>> fetchHighestRatedMovies() {
+    public Flowable<List<Movie>> fetchHighestRatedMovies(int page) {
         return Flowable.create(emitter -> emitter.onNext(mMoviesDao.getHighestRatedMovies()), BackpressureStrategy.BUFFER);
-//        return Flowable.just().flatMap((Function<Integer, Flowable<List<Movie>>>) integer -> Flowable.just(mMoviesDao.getHighestRatedMovies()));
     }
 
     @Override
     public Flowable<List<Movie>> fetchFavoritesMovies() {
-        return null;
+        return Flowable.create(emitter -> emitter.onNext(mMoviesDao.getFavoritesMovies()), BackpressureStrategy.BUFFER);
     }
 
     @Override
