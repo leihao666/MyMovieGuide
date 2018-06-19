@@ -58,4 +58,7 @@ public interface MoviesDao {
      */
     @Update
     int updateMovie(Movie movie);
+
+    @Query("SELECT is_favorite FROM MOVIES WHERE entryid = :id")
+    int isFavorite(String id);
 }

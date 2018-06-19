@@ -46,7 +46,7 @@ public final class Movie implements Parcelable {
     @ColumnInfo(name = "popularity")
     private double popularity;
     @ColumnInfo(name = "is_favorite")
-    private final int isFavorite;
+    private int isFavorite;
 
     private Movie(Parcel in) {
         id = in.readString();
@@ -152,6 +152,10 @@ public final class Movie implements Parcelable {
 
     public int getIsFavorite() {
         return isFavorite;
+    }
+
+    public void setIsFavorite(int isFavorite) {
+        this.isFavorite = isFavorite;
     }
 
     @Override

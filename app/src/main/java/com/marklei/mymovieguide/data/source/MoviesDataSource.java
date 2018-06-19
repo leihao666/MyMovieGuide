@@ -19,6 +19,8 @@ package com.marklei.mymovieguide.data.source;
 import android.support.annotation.NonNull;
 
 import com.marklei.mymovieguide.data.Movie;
+import com.marklei.mymovieguide.data.Review;
+import com.marklei.mymovieguide.data.Video;
 
 import java.util.List;
 
@@ -35,7 +37,15 @@ public interface MoviesDataSource {
 
     Flowable<List<Movie>> fetchFavoritesMovies();
 
+    Flowable<List<Video>> getTrailers(String id);
+
+    Flowable<List<Review>> getReviews(String id);
+
+    Flowable<Integer> getFavorite(String id);
+
     void saveMovie(@NonNull Movie movie);
+
+    void updateMovie(@NonNull Movie movie);
 
     void refreshMovies();
 }

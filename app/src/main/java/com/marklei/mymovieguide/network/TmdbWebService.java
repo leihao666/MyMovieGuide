@@ -5,7 +5,6 @@ import com.marklei.mymovieguide.network.wrapper.ReviewsWrapper;
 import com.marklei.mymovieguide.network.wrapper.VideoWrapper;
 
 import io.reactivex.Flowable;
-import io.reactivex.Observable;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -23,9 +22,9 @@ public interface TmdbWebService {
     Flowable<MoviesWraper> highestRatedMovies(@Query("page") int page);
 
     @GET("3/movie/{movieId}/videos")
-    Observable<VideoWrapper> trailers(@Path("movieId") String movieId);
+    Flowable<VideoWrapper> trailers(@Path("movieId") String movieId);
 
     @GET("3/movie/{movieId}/reviews")
-    Observable<ReviewsWrapper> reviews(@Path("movieId") String movieId);
+    Flowable<ReviewsWrapper> reviews(@Path("movieId") String movieId);
 
 }

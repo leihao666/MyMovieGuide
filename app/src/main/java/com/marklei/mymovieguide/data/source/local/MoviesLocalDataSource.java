@@ -3,6 +3,8 @@ package com.marklei.mymovieguide.data.source.local;
 import android.support.annotation.NonNull;
 
 import com.marklei.mymovieguide.data.Movie;
+import com.marklei.mymovieguide.data.Review;
+import com.marklei.mymovieguide.data.Video;
 import com.marklei.mymovieguide.data.source.MoviesDataSource;
 
 import java.util.List;
@@ -41,9 +43,30 @@ public class MoviesLocalDataSource implements MoviesDataSource {
     }
 
     @Override
+    public Flowable<List<Video>> getTrailers(String id) {
+        return null;
+    }
+
+    @Override
+    public Flowable<List<Review>> getReviews(String id) {
+        return null;
+    }
+
+    @Override
+    public Flowable<Integer> getFavorite(String id) {
+        return Flowable.just(id).flatMap(string -> Flowable.just(mMoviesDao.isFavorite(string)));
+    }
+
+    @Override
     public void saveMovie(@NonNull final Movie movie) {
         checkNotNull(movie);
         mMoviesDao.insertMovie(movie);
+    }
+
+    @Override
+    public void updateMovie(@NonNull final Movie movie) {
+        checkNotNull(movie);
+        mMoviesDao.updateMovie(movie);
     }
 
     @Override

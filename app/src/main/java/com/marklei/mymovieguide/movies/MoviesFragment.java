@@ -1,5 +1,6 @@
 package com.marklei.mymovieguide.movies;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import com.marklei.mymovieguide.R;
 import com.marklei.mymovieguide.data.Movie;
 import com.marklei.mymovieguide.di.ActivityScoped;
+import com.marklei.mymovieguide.moviedetail.MovieDetailActivity;
 import com.marklei.mymovieguide.movies.sorting.SortType;
 
 import java.util.ArrayList;
@@ -95,6 +97,7 @@ public class MoviesFragment extends DaggerFragment implements MoviesContract.Vie
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mPresenter.takeView(this);
+        mPresenter.firstPage(false);
     }
 
     @Override
@@ -122,7 +125,9 @@ public class MoviesFragment extends DaggerFragment implements MoviesContract.Vie
 
     @Override
     public void showMovieDetailsUi(Movie movie) {
-
+        Intent intent = new Intent(getContext(), MovieDetailActivity.class);
+        intent.putExtra(MovieDetailActivity.EXTRA_MOVIE, movie);
+        startActivity(intent);
     }
 
     @Override

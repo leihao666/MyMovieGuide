@@ -20,6 +20,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.marklei.mymovieguide.data.Movie;
+import com.marklei.mymovieguide.data.Review;
+import com.marklei.mymovieguide.data.Video;
 import com.marklei.mymovieguide.movies.sorting.SortType;
 import com.marklei.mymovieguide.movies.sorting.SortingOptionStore;
 
@@ -55,6 +57,7 @@ public class MoviesRepository implements MoviesDataSource {
 
     boolean mCachePopularIsDirty = false;
     boolean mCacheHighestRatedIsDirty = false;
+    boolean mCacheFavoritesIsDirty = false;
 
     @Inject
     MoviesRepository(@Remote MoviesDataSource moviesRemoteDataSource,
@@ -147,25 +150,45 @@ public class MoviesRepository implements MoviesDataSource {
 
     @Override
     public Flowable<List<Movie>> fetchFavoritesMovies() {
-        if (mCachedFavoritesMovies != null) {
+        if (mCachedFavoritesMovies != null && !mCacheFavoritesIsDirty) {
             return Flowable.fromIterable(mCachedFavoritesMovies.values()).toList().toFlowable();
         } else {
             mCachedFavoritesMovies = new LinkedHashMap<>();
         }
 
-        Flowable<List<Movie>> remoteMovies = getAndCacheLocalFavoritesMovies();
-        return Flowable.concat(Flowable.fromIterable(mCachedFavoritesMovies.values()).toList().toFlowable(), remoteMovies)
-                .filter(movies -> !movies.isEmpty())
-                .firstOrError()
-                .toFlowable();
+        Flowable<List<Movie>> localMovies = getAndCacheLocalFavoritesMovies();
+
+        if (mCacheFavoritesIsDirty) {
+            return localMovies;
+        } else {
+            return Flowable.concat(Flowable.fromIterable(mCachedFavoritesMovies.values()).toList().toFlowable(), localMovies)
+                    .filter(movies -> !movies.isEmpty())
+                    .firstOrError()
+                    .toFlowable();
+        }
     }
 
     private Flowable<List<Movie>> getAndCacheLocalFavoritesMovies() {
         return mMoviesLocalDataSource.fetchFavoritesMovies()
                 .flatMap(movies -> Flowable.fromIterable(movies)
                         .doOnNext(movie -> mCachedFavoritesMovies.put(movie.getId(), movie))
-                        .toList()
-                        .toFlowable());
+                        .toList().toFlowable())
+                .doOnComplete(() -> mCacheFavoritesIsDirty = false);
+    }
+
+    @Override
+    public Flowable<List<Video>> getTrailers(String id) {
+        return mMoviesRemoteDataSource.getTrailers(id);
+    }
+
+    @Override
+    public Flowable<List<Review>> getReviews(String id) {
+        return mMoviesRemoteDataSource.getReviews(id);
+    }
+
+    @Override
+    public Flowable<Integer> getFavorite(String id) {
+        return mMoviesLocalDataSource.getFavorite(id);
     }
 
     @Override
@@ -176,9 +199,17 @@ public class MoviesRepository implements MoviesDataSource {
     }
 
     @Override
+    public void updateMovie(@NonNull Movie movie) {
+        checkNotNull(movie);
+        mMoviesRemoteDataSource.updateMovie(movie);
+        mMoviesLocalDataSource.updateMovie(movie);
+    }
+
+    @Override
     public void refreshMovies() {
         mCachePopularIsDirty = true;
         mCacheHighestRatedIsDirty = true;
+        mCacheFavoritesIsDirty = true;
     }
 
     public int getSelectedOption() {

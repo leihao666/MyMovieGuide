@@ -1,5 +1,7 @@
 package com.marklei.mymovieguide.di;
 
+import com.marklei.mymovieguide.moviedetail.MovieDetailActivity;
+import com.marklei.mymovieguide.moviedetail.MovieDetailModule;
 import com.marklei.mymovieguide.movies.MoviesActivity;
 import com.marklei.mymovieguide.movies.MoviesModule;
 
@@ -19,4 +21,8 @@ public abstract class ActivityBindingModule {
     @ActivityScoped
     @ContributesAndroidInjector(modules = MoviesModule.class)
     abstract MoviesActivity moviesActivity();
+
+    @ActivityScoped
+    @ContributesAndroidInjector(modules = MovieDetailModule.class)
+    abstract MovieDetailActivity movieDetailActivity();
 }

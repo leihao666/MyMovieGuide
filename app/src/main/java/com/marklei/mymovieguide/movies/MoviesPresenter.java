@@ -122,7 +122,6 @@ public class MoviesPresenter implements MoviesContract.Presenter {
     @Override
     public void takeView(MoviesContract.View view) {
         this.view = view;
-        firstPage(false);
     }
 
     @Override
