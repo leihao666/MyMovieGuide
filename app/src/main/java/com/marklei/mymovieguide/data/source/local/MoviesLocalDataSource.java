@@ -29,17 +29,27 @@ public class MoviesLocalDataSource implements MoviesDataSource {
 
     @Override
     public Flowable<List<Movie>> fetchPopularMovies(int page) {
-        return Flowable.create(emitter -> emitter.onNext(mMoviesDao.getPopularMovies()), BackpressureStrategy.BUFFER);
+        return Flowable.create(emitter -> {
+            emitter.onNext(mMoviesDao.getPopularMovies());
+            emitter.onComplete();
+        }, BackpressureStrategy.BUFFER);
     }
 
     @Override
     public Flowable<List<Movie>> fetchHighestRatedMovies(int page) {
-        return Flowable.create(emitter -> emitter.onNext(mMoviesDao.getHighestRatedMovies()), BackpressureStrategy.BUFFER);
+//        return Flowable.just(page).flatMap(i -> Flowable.just(mMoviesDao.getHighestRatedMovies()));
+        return Flowable.create(emitter -> {
+            emitter.onNext(mMoviesDao.getHighestRatedMovies());
+            emitter.onComplete();
+        }, BackpressureStrategy.BUFFER);
     }
 
     @Override
     public Flowable<List<Movie>> fetchFavoritesMovies() {
-        return Flowable.create(emitter -> emitter.onNext(mMoviesDao.getFavoritesMovies()), BackpressureStrategy.BUFFER);
+        return Flowable.create(emitter -> {
+            emitter.onNext(mMoviesDao.getFavoritesMovies());
+            emitter.onComplete();
+        }, BackpressureStrategy.BUFFER);
     }
 
     @Override

@@ -8,7 +8,7 @@ def getProperty(String filename, String propName) {
         if (props[propName] != null) {
             return props[propName]
         } else {
-            print("No such property " + propName + " in file " + filename);
+            print("No such property " + propName + " in file " + filename)
         }
     } else {
         print(filename + " does not exist!")
@@ -56,8 +56,8 @@ dependencies {
     implementation "com.android.support:recyclerview-v7:${supportLibVersion}"
     implementation "com.android.support:palette-v7:${supportLibVersion}"
     implementation 'com.google.guava:guava:22.0'
-    implementation 'android.arch.persistence.room:runtime:1.1.0'
-    annotationProcessor "android.arch.persistence.room:compiler:1.1.0"
+    implementation 'android.arch.persistence.room:runtime:1.1.1'
+    annotationProcessor "android.arch.persistence.room:compiler:1.1.1"
     // Rx
     implementation 'io.reactivex.rxjava2:rxjava:2.1.9'
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'

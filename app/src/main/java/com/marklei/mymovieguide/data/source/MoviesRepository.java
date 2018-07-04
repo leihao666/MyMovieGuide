@@ -49,15 +49,15 @@ public class MoviesRepository implements MoviesDataSource {
     private SortingOptionStore sortingOptionStore;
 
     @Nullable
-    Map<String, Movie> mCachedPopularMovies;
+    private Map<String, Movie> mCachedPopularMovies;
     @Nullable
-    Map<String, Movie> mCachedHighestRatedMovies;
+    private Map<String, Movie> mCachedHighestRatedMovies;
     @Nullable
-    Map<String, Movie> mCachedFavoritesMovies;
+    private Map<String, Movie> mCachedFavoritesMovies;
 
-    boolean mCachePopularIsDirty = false;
-    boolean mCacheHighestRatedIsDirty = false;
-    boolean mCacheFavoritesIsDirty = false;
+    private boolean mCachePopularIsDirty = false;
+    private boolean mCacheHighestRatedIsDirty = false;
+    private boolean mCacheFavoritesIsDirty = false;
 
     @Inject
     MoviesRepository(@Remote MoviesDataSource moviesRemoteDataSource,
@@ -91,8 +91,7 @@ public class MoviesRepository implements MoviesDataSource {
     }
 
     private Flowable<List<Movie>> getAndSaveRemotePopularMovies(int page) {
-        return mMoviesRemoteDataSource
-                .fetchPopularMovies(page)
+        return mMoviesRemoteDataSource.fetchPopularMovies(page)
                 .flatMap(movies -> Flowable.fromIterable(movies).doOnNext(movie -> {
                     mMoviesLocalDataSource.saveMovie(movie);
                     mCachedPopularMovies.put(movie.getId(), movie);
@@ -131,8 +130,7 @@ public class MoviesRepository implements MoviesDataSource {
     }
 
     private Flowable<List<Movie>> getAndSaveRemoteHighestRatedMovies(int page) {
-        return mMoviesRemoteDataSource
-                .fetchHighestRatedMovies(page)
+        return mMoviesRemoteDataSource.fetchHighestRatedMovies(page)
                 .flatMap(movies -> Flowable.fromIterable(movies).doOnNext(movie -> {
                     mMoviesLocalDataSource.saveMovie(movie);
                     mCachedHighestRatedMovies.put(movie.getId(), movie);
