@@ -7,7 +7,7 @@ import com.marklei.mymovieguide.data.Review;
 import com.marklei.mymovieguide.data.Video;
 import com.marklei.mymovieguide.data.source.MoviesDataSource;
 import com.marklei.mymovieguide.network.TmdbWebService;
-import com.marklei.mymovieguide.network.wrapper.MoviesWraper;
+import com.marklei.mymovieguide.network.wrapper.MoviesWrapper;
 import com.marklei.mymovieguide.network.wrapper.ReviewsWrapper;
 import com.marklei.mymovieguide.network.wrapper.VideoWrapper;
 
@@ -30,12 +30,12 @@ public class MoviesRemoteDataSource implements MoviesDataSource {
 
     @Override
     public Flowable<List<Movie>> fetchPopularMovies(int page) {
-        return tmdbWebService.popularMovies(page).map(MoviesWraper::getMovieList);
+        return tmdbWebService.popularMovies(page).map(MoviesWrapper::getMovieList);
     }
 
     @Override
     public Flowable<List<Movie>> fetchHighestRatedMovies(int page) {
-        return tmdbWebService.highestRatedMovies(page).map(MoviesWraper::getMovieList);
+        return tmdbWebService.highestRatedMovies(page).map(MoviesWrapper::getMovieList);
     }
 
     @Override

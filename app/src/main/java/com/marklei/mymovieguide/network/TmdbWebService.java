@@ -1,6 +1,6 @@
 package com.marklei.mymovieguide.network;
 
-import com.marklei.mymovieguide.network.wrapper.MoviesWraper;
+import com.marklei.mymovieguide.network.wrapper.MoviesWrapper;
 import com.marklei.mymovieguide.network.wrapper.ReviewsWrapper;
 import com.marklei.mymovieguide.network.wrapper.VideoWrapper;
 
@@ -16,10 +16,10 @@ import retrofit2.http.Query;
 public interface TmdbWebService {
 
     @GET("3/discover/movie?language=zh&sort_by=popularity.desc")
-    Flowable<MoviesWraper> popularMovies(@Query("page") int page);
+    Flowable<MoviesWrapper> popularMovies(@Query("page") int page);
 
     @GET("3/discover/movie?vote_count.gte=500&language=zh&sort_by=vote_average.desc")
-    Flowable<MoviesWraper> highestRatedMovies(@Query("page") int page);
+    Flowable<MoviesWrapper> highestRatedMovies(@Query("page") int page);
 
     @GET("3/movie/{movieId}/videos")
     Flowable<VideoWrapper> trailers(@Path("movieId") String movieId);

@@ -9,7 +9,7 @@ import java.util.List;
  * Created by ivan on 8/20/2017.
  */
 
-public class MoviesWraper {
+public class MoviesWrapper {
 
     @Json(name = "results")
     private List<Movie> movies;
