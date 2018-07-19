@@ -55,7 +55,7 @@ dependencies {
     implementation "com.android.support:appcompat-v7:${supportLibVersion}"
     implementation "com.android.support:recyclerview-v7:${supportLibVersion}"
     implementation "com.android.support:palette-v7:${supportLibVersion}"
-    implementation 'com.google.guava:guava:22.0'
+    implementation 'com.google.guava:guava:23.0'
     implementation 'android.arch.persistence.room:runtime:1.1.1'
     annotationProcessor "android.arch.persistence.room:compiler:1.1.1"
     // Rx

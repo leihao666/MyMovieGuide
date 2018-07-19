@@ -120,10 +120,11 @@ public class MovieDetailPresenter implements MovieDetailContract.Presenter {
                 movie.setIsFavorite(1);
                 view.showIsFavorited(true);
             }
-            Flowable.just(movie).doOnNext(mMoviesRepository::updateMovie)
+            Disposable disposable = Flowable.just(movie).doOnNext(mMoviesRepository::updateMovie)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe();
+            mCompositeDisposable.add(disposable);
         }
     }
 
