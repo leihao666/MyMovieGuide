@@ -6,10 +6,10 @@ import com.marklei.mymovieguide.data.Movie;
 import com.marklei.mymovieguide.data.Review;
 import com.marklei.mymovieguide.data.Video;
 import com.marklei.mymovieguide.data.source.MoviesDataSource;
-import com.marklei.mymovieguide.network.TmdbWebService;
-import com.marklei.mymovieguide.network.wrapper.MoviesWrapper;
-import com.marklei.mymovieguide.network.wrapper.ReviewsWrapper;
-import com.marklei.mymovieguide.network.wrapper.VideoWrapper;
+import com.marklei.mymovieguide.data.source.remote.network.TmdbWebService;
+import com.marklei.mymovieguide.data.source.remote.network.wrapper.MoviesWrapper;
+import com.marklei.mymovieguide.data.source.remote.network.wrapper.ReviewsWrapper;
+import com.marklei.mymovieguide.data.source.remote.network.wrapper.VideoWrapper;
 
 import java.util.List;
 

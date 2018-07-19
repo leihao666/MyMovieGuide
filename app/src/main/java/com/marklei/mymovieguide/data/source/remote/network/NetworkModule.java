@@ -1,4 +1,4 @@
-package com.marklei.mymovieguide.network;
+package com.marklei.mymovieguide.data.source.remote.network;
 
 import com.marklei.mymovieguide.BuildConfig;
 
@@ -25,13 +25,13 @@ public class NetworkModule {
 
     @Provides
     @Singleton
-    Interceptor requestInterceptor(RequestInterceptor interceptor) {
+    static Interceptor requestInterceptor(RequestInterceptor interceptor) {
         return interceptor;
     }
 
     @Provides
     @Singleton
-    OkHttpClient provideOkHttpClient(RequestInterceptor requestInterceptor) {
+    static OkHttpClient provideOkHttpClient(RequestInterceptor requestInterceptor) {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -44,7 +44,7 @@ public class NetworkModule {
 
     @Singleton
     @Provides
-    Retrofit retrofit(OkHttpClient okHttpClient) {
+    static Retrofit retrofit(OkHttpClient okHttpClient) {
         return new Retrofit
                 .Builder()
                 .baseUrl(BuildConfig.TMDB_BASE_URL)
@@ -56,7 +56,7 @@ public class NetworkModule {
 
     @Singleton
     @Provides
-    TmdbWebService tmdbWebService(Retrofit retrofit) {
+    static TmdbWebService tmdbWebService(Retrofit retrofit) {
         return retrofit.create(TmdbWebService.class);
     }
 

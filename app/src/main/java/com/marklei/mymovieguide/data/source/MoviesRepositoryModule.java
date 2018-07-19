@@ -7,8 +7,7 @@ import com.marklei.mymovieguide.data.source.local.MovieGuideDatabase;
 import com.marklei.mymovieguide.data.source.local.MoviesDao;
 import com.marklei.mymovieguide.data.source.local.MoviesLocalDataSource;
 import com.marklei.mymovieguide.data.source.remote.MoviesRemoteDataSource;
-import com.marklei.mymovieguide.util.schedulers.BaseSchedulerProvider;
-import com.marklei.mymovieguide.util.schedulers.SchedulerProvider;
+import com.marklei.mymovieguide.data.source.remote.network.NetworkModule;
 
 import javax.inject.Singleton;
 
@@ -16,7 +15,7 @@ import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
 
-@Module
+@Module(includes = NetworkModule.class)
 abstract public class MoviesRepositoryModule {
 
     @Singleton
@@ -42,7 +41,4 @@ abstract public class MoviesRepositoryModule {
         return db.moviesDao();
     }
 
-    @Singleton
-    @Binds
-    abstract BaseSchedulerProvider provideSchedulerProvider(SchedulerProvider schedulerProvider);
 }

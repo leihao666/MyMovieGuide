@@ -7,7 +7,6 @@ import com.marklei.mymovieguide.data.source.MoviesDataSource;
 import com.marklei.mymovieguide.data.source.MoviesRepository;
 import com.marklei.mymovieguide.di.ActivityScoped;
 import com.marklei.mymovieguide.movies.sorting.SortType;
-import com.marklei.mymovieguide.util.schedulers.BaseSchedulerProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +14,10 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -28,9 +29,6 @@ public class MoviesPresenter implements MoviesContract.Presenter {
 
     private MoviesContract.View view;
 
-    @NonNull
-    private final BaseSchedulerProvider mSchedulerProvider;
-
     private int currentPage = 1;
     private List<Movie> loadedMovies = new ArrayList<>();
 
@@ -38,9 +36,8 @@ public class MoviesPresenter implements MoviesContract.Presenter {
     private CompositeDisposable mCompositeDisposable;
 
     @Inject
-    MoviesPresenter(@NonNull MoviesRepository moviesRepository, @NonNull BaseSchedulerProvider schedulerProvider) {
+    MoviesPresenter(@NonNull MoviesRepository moviesRepository) {
         mMoviesRepository = checkNotNull(moviesRepository, "moviesRepository cannot be null");
-        mSchedulerProvider = checkNotNull(schedulerProvider, "schedulerProvider cannot be null");
 
         mCompositeDisposable = new CompositeDisposable();
     }
@@ -89,8 +86,8 @@ public class MoviesPresenter implements MoviesContract.Presenter {
             listFlowable = mMoviesRepository.fetchFavoritesMovies();
         }
         Disposable disposable = listFlowable
-                .subscribeOn(mSchedulerProvider.io())
-                .observeOn(mSchedulerProvider.ui())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         // onNext
                         this::onMovieFetchSuccess,

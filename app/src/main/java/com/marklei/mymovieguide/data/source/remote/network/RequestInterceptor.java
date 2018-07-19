@@ -1,4 +1,4 @@
-package com.marklei.mymovieguide.network;
+package com.marklei.mymovieguide.data.source.remote.network;
 
 import com.marklei.mymovieguide.BuildConfig;
 

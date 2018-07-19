@@ -7,15 +7,16 @@ import com.marklei.mymovieguide.data.Review;
 import com.marklei.mymovieguide.data.Video;
 import com.marklei.mymovieguide.data.source.MoviesRepository;
 import com.marklei.mymovieguide.di.ActivityScoped;
-import com.marklei.mymovieguide.util.schedulers.BaseSchedulerProvider;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
 import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -28,15 +29,11 @@ public class MovieDetailPresenter implements MovieDetailContract.Presenter {
     private MovieDetailContract.View view;
 
     @NonNull
-    private final BaseSchedulerProvider mSchedulerProvider;
-
-    @NonNull
     private CompositeDisposable mCompositeDisposable;
 
     @Inject
-    MovieDetailPresenter(@NonNull MoviesRepository moviesRepository, @NonNull BaseSchedulerProvider schedulerProvider) {
+    MovieDetailPresenter(@NonNull MoviesRepository moviesRepository) {
         mMoviesRepository = checkNotNull(moviesRepository, "moviesRepository cannot be null");
-        mSchedulerProvider = checkNotNull(schedulerProvider, "schedulerProvider cannot be null");
 
         mCompositeDisposable = new CompositeDisposable();
     }
@@ -55,8 +52,8 @@ public class MovieDetailPresenter implements MovieDetailContract.Presenter {
     @Override
     public void loadTrailers(Movie movie) {
         Disposable disposable = mMoviesRepository.getTrailers(movie.getId())
-                .subscribeOn(mSchedulerProvider.io())
-                .observeOn(mSchedulerProvider.ui())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         // onNext
                         this::onLoadTrailersSuccess,
@@ -78,8 +75,8 @@ public class MovieDetailPresenter implements MovieDetailContract.Presenter {
     @Override
     public void loadReviews(Movie movie) {
         Disposable disposable = mMoviesRepository.getReviews(movie.getId())
-                .subscribeOn(mSchedulerProvider.io())
-                .observeOn(mSchedulerProvider.ui())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::onLoadReviewsSuccess);
         mCompositeDisposable.add(disposable);
     }
@@ -93,8 +90,8 @@ public class MovieDetailPresenter implements MovieDetailContract.Presenter {
     @Override
     public void loadFavorite(Movie movie) {
         Disposable disposable = mMoviesRepository.getFavorite(movie.getId())
-                .subscribeOn(mSchedulerProvider.io())
-                .observeOn(mSchedulerProvider.ui())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         // onNext
                         this::onLoadFavoriteSuccess,
@@ -124,8 +121,8 @@ public class MovieDetailPresenter implements MovieDetailContract.Presenter {
                 view.showIsFavorited(true);
             }
             Flowable.just(movie).doOnNext(mMoviesRepository::updateMovie)
-                    .subscribeOn(mSchedulerProvider.io())
-                    .observeOn(mSchedulerProvider.ui())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe();
         }
     }

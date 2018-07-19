@@ -1,8 +1,8 @@
-package com.marklei.mymovieguide.network;
+package com.marklei.mymovieguide.data.source.remote.network;
 
-import com.marklei.mymovieguide.network.wrapper.MoviesWrapper;
-import com.marklei.mymovieguide.network.wrapper.ReviewsWrapper;
-import com.marklei.mymovieguide.network.wrapper.VideoWrapper;
+import com.marklei.mymovieguide.data.source.remote.network.wrapper.MoviesWrapper;
+import com.marklei.mymovieguide.data.source.remote.network.wrapper.ReviewsWrapper;
+import com.marklei.mymovieguide.data.source.remote.network.wrapper.VideoWrapper;
 
 import io.reactivex.Flowable;
 import retrofit2.http.GET;

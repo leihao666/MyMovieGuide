@@ -4,7 +4,6 @@ import android.app.Application;
 
 import com.marklei.mymovieguide.BaseApplication;
 import com.marklei.mymovieguide.data.source.MoviesRepositoryModule;
-import com.marklei.mymovieguide.network.NetworkModule;
 
 import javax.inject.Singleton;
 
@@ -15,8 +14,7 @@ import dagger.android.support.AndroidSupportInjectionModule;
 
 @Singleton
 @Component(modules = {
-        AppModule.class,
-        NetworkModule.class,
+        ApplicationModule.class,
         ActivityBindingModule.class,
         MoviesRepositoryModule.class,
         AndroidSupportInjectionModule.class})

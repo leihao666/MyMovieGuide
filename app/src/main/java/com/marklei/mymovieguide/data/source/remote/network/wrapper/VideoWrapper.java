@@ -1,4 +1,4 @@
-package com.marklei.mymovieguide.network.wrapper;
+package com.marklei.mymovieguide.data.source.remote.network.wrapper;
 
 import com.marklei.mymovieguide.data.Video;
 import com.squareup.moshi.Json;
