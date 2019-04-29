@@ -1,7 +1,7 @@
 package com.marklei.mymovieguide.data.source;
 
 import android.app.Application;
-import android.arch.persistence.room.Room;
+import androidx.room.Room;
 
 import com.marklei.mymovieguide.data.source.local.MovieGuideDatabase;
 import com.marklei.mymovieguide.data.source.local.MoviesDao;

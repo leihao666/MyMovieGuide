@@ -3,14 +3,14 @@ package com.marklei.mymovieguide.moviedetail;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.marklei.mymovieguide.Api;
+import com.marklei.mymovieguide.Constants;
 import com.marklei.mymovieguide.R;
 import com.marklei.mymovieguide.data.Movie;
 import com.marklei.mymovieguide.data.Review;
@@ -40,8 +41,6 @@ import dagger.android.support.DaggerFragment;
 
 @ActivityScoped
 public class MovieDetailFragment extends DaggerFragment implements MovieDetailContract.View, View.OnClickListener {
-
-    public static final String EXTRA_MOVIE_DETAIL = "MOVIE_DETAIL";
 
     @Inject
     MovieDetailContract.Presenter mPresenter;
@@ -120,7 +119,7 @@ public class MovieDetailFragment extends DaggerFragment implements MovieDetailCo
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (getArguments() != null) {
-            Movie movie = (Movie) getArguments().get(EXTRA_MOVIE_DETAIL);
+            Movie movie = (Movie) getArguments().get(Constants.MOVIE);
             if (movie != null) {
                 this.movie = movie;
                 mPresenter.takeView(this);

@@ -30,19 +30,17 @@ ext {
     // Sdk and tools
     // Support library and architecture components support minSdk 19 and above.
     compileSdkVersion = 28
-    buildToolsVersion = '28.0.3'
     minSdkVersion = 19
     targetSdkVersion = 28
 
     // App dependencies
-    supportLibVersion = '28.0.0'
     roomVersion = '1.1.1'
     okhttpVersion = '3.9.0'
     retrofitVersion = '2.4.0'
     glideVersion = '4.9.0'
     daggerVersion = '2.22.1'
     guavaVersion = '18.0'
-    butterknifeVersion = '8.8.1'
+    butterknifeVersion = '10.1.0'
 
     junitVersion = '4.12'
     espressoVersion = '3.0.2'

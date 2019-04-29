@@ -1,6 +1,6 @@
 package com.marklei.mymovieguide.movies;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.marklei.mymovieguide.data.Movie;
 import com.marklei.mymovieguide.data.source.MoviesDataSource;

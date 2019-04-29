@@ -3,17 +3,18 @@ package com.marklei.mymovieguide.movies;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.PopupMenu;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.appcompat.widget.PopupMenu;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.marklei.mymovieguide.Constants;
 import com.marklei.mymovieguide.R;
 import com.marklei.mymovieguide.data.Movie;
 import com.marklei.mymovieguide.di.ActivityScoped;
@@ -126,7 +127,7 @@ public class MoviesFragment extends DaggerFragment implements MoviesContract.Vie
     @Override
     public void showMovieDetailsUi(Movie movie) {
         Intent intent = new Intent(getContext(), MovieDetailActivity.class);
-        intent.putExtra(MovieDetailActivity.EXTRA_MOVIE, movie);
+        intent.putExtra(Constants.MOVIE, movie);
         startActivity(intent);
     }
 
