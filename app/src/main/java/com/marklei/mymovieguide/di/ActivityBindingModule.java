@@ -1,9 +1,10 @@
 package com.marklei.mymovieguide.di;
 
-import com.marklei.mymovieguide.moviedetail.MovieDetailActivity;
-import com.marklei.mymovieguide.moviedetail.MovieDetailModule;
-import com.marklei.mymovieguide.movies.MoviesActivity;
-import com.marklei.mymovieguide.movies.MoviesModule;
+import com.marklei.mymovieguide.ui.moviedetail.MovieDetailActivity;
+import com.marklei.mymovieguide.ui.moviedetail.MovieDetailModule;
+import com.marklei.mymovieguide.ui.movies.MoviesActivity;
+import com.marklei.mymovieguide.ui.movies.MoviesModule;
+import com.marklei.mymovieguide.shared.di.ActivityScoped;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;

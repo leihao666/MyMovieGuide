@@ -1,13 +1,44 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
+    // Define versions in a single place
+    ext {
+        // App version
+        versionName = '1.0.0' // X.Y.Z; X = Major, Y = minor, Z = Patch level
+        versionCodeBase = 10000 // XYZZM; M = Module (mobile)
+        versionCodeMobile = versionCodeBase + 3
+
+        // SDK and tools
+        compileSdkVersion = 28
+        minSdkVersion = 19
+        targetSdkVersion = 28
+
+        // App dependencies
+        androidGradlePluginVersion = '3.4.1'
+        appcompatVersion = '1.0.2'
+        butterknifeVersion = '10.1.0'
+        daggerVersion = '2.22.1'
+        espressoVersion = '3.0.2'
+        glideVersion = '4.9.0'
+        guavaVersion = '18.0'
+        junitVersion = '4.12'
+        materialVersion = '1.0.0'
+        moshiVersion = '1.5.0'
+        okhttpVersion = '3.9.0'
+        paletteVersion = '1.0.0'
+        recyclerviewVersion = '1.0.0'
+        retrofitVersion = '2.4.0'
+        roomVersion = '2.0.0'
+        rxAndroidVersion = '2.0.2'
+        rxJavaVersion = '2.1.17'
+    }
 
     repositories {
         google()
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.4.1'
+        classpath "com.android.tools.build:gradle:$androidGradlePluginVersion"
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -23,25 +54,4 @@ allprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
-}
-
-// Define versions in a single place
-ext {
-    // Sdk and tools
-    // Support library and architecture components support minSdk 19 and above.
-    compileSdkVersion = 28
-    minSdkVersion = 19
-    targetSdkVersion = 28
-
-    // App dependencies
-    roomVersion = '1.1.1'
-    okhttpVersion = '3.9.0'
-    retrofitVersion = '2.4.0'
-    glideVersion = '4.9.0'
-    daggerVersion = '2.22.1'
-    guavaVersion = '18.0'
-    butterknifeVersion = '10.1.0'
-
-    junitVersion = '4.12'
-    espressoVersion = '3.0.2'
 }

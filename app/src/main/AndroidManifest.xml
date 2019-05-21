@@ -2,8 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.marklei.mymovieguide">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-
     <application
         android:name=".BaseApplication"
         android:allowBackup="true"
@@ -12,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".movies.MoviesActivity"
+            android:name=".ui.movies.MoviesActivity"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,12 +19,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".moviedetail.MovieDetailActivity"
-            android:parentActivityName=".movies.MoviesActivity"
+            android:name=".ui.moviedetail.MovieDetailActivity"
+            android:parentActivityName=".ui.movies.MoviesActivity"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".movies.MoviesActivity" />
+                android:value=".ui.movies.MoviesActivity" />
         </activity>
     </application>
 

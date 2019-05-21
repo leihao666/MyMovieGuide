@@ -1,6 +1,6 @@
 package com.marklei.mymovieguide;
 
-import com.marklei.mymovieguide.data.source.MoviesRepository;
+import com.marklei.mymovieguide.shared.data.MoviesRepository;
 import com.marklei.mymovieguide.di.DaggerAppComponent;
 
 import javax.inject.Inject;

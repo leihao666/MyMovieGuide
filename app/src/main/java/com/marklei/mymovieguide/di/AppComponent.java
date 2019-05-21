@@ -3,7 +3,7 @@ package com.marklei.mymovieguide.di;
 import android.app.Application;
 
 import com.marklei.mymovieguide.BaseApplication;
-import com.marklei.mymovieguide.data.source.MoviesRepositoryModule;
+import com.marklei.mymovieguide.shared.di.MoviesRepositoryModule;
 
 import javax.inject.Singleton;
 
